@@ -13,6 +13,7 @@
     "@gsap/react": "^2.1.2",
     "@heroui/react": "^2.8.0-beta.6",
     "@tailwindcss/vite": "^4.1.7",
+    "axios": "^1.9.0",
     "framer-motion": "^12.14.0",
     "react": "^19.1.0",
     "react-cookie": "^8.0.1",

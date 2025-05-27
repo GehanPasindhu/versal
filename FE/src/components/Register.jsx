@@ -2,6 +2,7 @@ import { Button, Checkbox, Form, Input } from "@heroui/react";
 import React, { useEffect, useState } from "react";
 import InputBox from "./InputBox";
 import { toast } from "react-toastify";
+import { register } from "../api/baseUrl";
 
 function Register({ onChange }) {
   const [form, setForm] = useState({
@@ -43,6 +44,8 @@ function Register({ onChange }) {
     e.preventDefault();
 
     toast.success("Registration successful!")
+
+    register()
   };
 
   useEffect(() => {
