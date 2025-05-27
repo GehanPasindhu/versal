@@ -2,7 +2,7 @@ import { Button, Checkbox, Form, Input } from "@heroui/react";
 import React, { useEffect, useState } from "react";
 import InputBox from "./InputBox";
 import { toast } from "react-toastify";
-import { register } from "../api/baseUrl";
+import { mainRequestUrl } from "../api/baseUrl";
 
 function Register({ onChange }) {
   const [form, setForm] = useState({
@@ -40,12 +40,31 @@ function Register({ onChange }) {
     setError(value !== form.password);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    toast.success("Registration successful!")
+    try {
+      const res = await fetch(mainRequestUrl("create"), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_id: form.user_id,
+          password: form.password,
+        }),
+      });
 
-    register()
+      const data = await res.json();
+
+      if (res.status === 201) {
+        toast.success("Registration successful!");
+      } else {
+        toast.error("Registration failed:", data.message);
+      }
+    } catch (error) {
+      toast.error("Fetch error:", error);
+    }
   };
 
   useEffect(() => {
@@ -53,8 +72,6 @@ function Register({ onChange }) {
     const passwordsMatch = form.password === form.confirm_password;
     setFormValidated(allValid && passwordsMatch);
   }, [form]);
-
-  
 
   return (
     <div>
@@ -115,7 +132,7 @@ function Register({ onChange }) {
       <div className="mt-10 flex gap-2 justify-center md:ml-10">
         Have an account?
         <button className="underline cursor-pointer" onClick={onChange}>
-         Login here
+          Login here
         </button>
       </div>
     </div>
