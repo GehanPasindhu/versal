@@ -13,6 +13,7 @@ function Login({ onChange }) {
   });
 
   const [formValidated, setFormValidated] = useState(false);
+  const [checkboxchecked, setCheckBoxChecked] = useState(false)
 
   const [cookies, setCookie] = useCookies(["user_id"]);
 
@@ -58,6 +59,15 @@ function Login({ onChange }) {
           secure: false,
         });
 
+        if(checkboxchecked){
+          setCookie("checkedUser", data.token, {
+            path: "/",
+            maxAge: oneYear,
+            sameSite: "strict",
+            secure: false,
+          });
+        }
+
         navigate("/profile");
       } else {
 
@@ -74,6 +84,11 @@ function Login({ onChange }) {
     const allValid = Object.values(form).every((val) => val.trim() !== "");
     setFormValidated(allValid);
   }, [form]);
+
+
+  const checkBoxChange = (e) =>{
+    setCheckBoxChecked(!checkboxchecked)
+  }
 
   return (
     <div>
@@ -104,7 +119,7 @@ function Login({ onChange }) {
         />
 
         <div className="flex flex-col justify-end items-center md:justify-center md:items-start md:ml-52  gap-3 w-full">
-          <Checkbox isDisabled={!formValidated}>Keep me logged in</Checkbox>
+          <Checkbox isDisabled={!formValidated} onValueChange={checkBoxChange}>Keep me logged in</Checkbox>
 
           <Button
             isDisabled={!formValidated}

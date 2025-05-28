@@ -14,6 +14,7 @@ function Register({ onChange }) {
   });
 
   const [formValidated, setFormValidated] = useState(false);
+  const [checkboxchecked, setCheckBoxChecked] = useState(false)
   const [error, setError] = useState(false);
 
   const handleChange = (e) => {
@@ -71,6 +72,15 @@ function Register({ onChange }) {
           secure: false,
         });
 
+        if(checkboxchecked){
+          setCookie("checkedUser", data.token, {
+            path: "/",
+            maxAge: oneYear,
+            sameSite: "strict",
+            secure: false,
+          });
+        }
+
         navigate("/profile");
       } else {
         toast.error("Registration failed:", data.message);
@@ -85,6 +95,10 @@ function Register({ onChange }) {
     const passwordsMatch = form.password === form.confirm_password;
     setFormValidated(allValid && passwordsMatch);
   }, [form]);
+
+  const checkBoxChange = (e) =>{
+    setCheckBoxChecked(!checkboxchecked)
+  }
 
   return (
     <div>
@@ -130,7 +144,7 @@ function Register({ onChange }) {
         )}
 
         <div className="flex flex-col justify-end items-center md:items-start md:ml-52 gap-3 w-full">
-          <Checkbox isDisabled={!formValidated}>Keep me logged in</Checkbox>
+          <Checkbox isDisabled={!formValidated} onValueChange={checkBoxChange}>Keep me logged in</Checkbox>
 
           <Button
             isDisabled={!formValidated}

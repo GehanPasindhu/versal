@@ -50,9 +50,9 @@ function AdditionalDetails({ user, editable = true }) {
       const data = await res.json();
 
       if (res.ok) {
-        toast.success("Registration successful!");
+        toast.success("Profile updated successful!");
       } else {
-        toast.error("Registration failed:", data.message);
+        toast.error("Profile updated failed:", data.message);
       }
     } catch (error) {
       console.log("Error", error);
