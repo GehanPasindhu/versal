@@ -1,36 +1,72 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import MainLayout from "../layout/MainLayout";
 import { Tab, Tabs } from "@heroui/react";
 import BasicDetails from "../components/user/BasicDetails";
 import AdditionalDetails from "../components/user/AdditionalDetails";
 import SpouseDetails from "../components/user/SpouseDetails";
 import PersonalDetails from "../components/user/PersonalDetails";
+import { mainRequestUrl } from "../api/baseUrl";
+import { toast } from "react-toastify";
+import { useCookies } from "react-cookie";
 
 function Profile() {
   const [hasSpouse, setHasSpouse] = useState(!false);
+  const [userData, setUserData] = useState([]);
+  const [token, setToken] = useState("")
 
   let tabItems = [
     {
       id: "basic_details",
       label: "Basic Details",
-      content: <BasicDetails />,
+      content:({user}) => <BasicDetails user={user}/>,
     },
     {
       id: "additional_details",
       label: "Additional Details",
-      content: <AdditionalDetails />,
+      content:({user}) =>  <AdditionalDetails user={user}/>,
     },
     hasSpouse && {
       id: "spouse_details",
       label: "Spouse Details",
-      content: <SpouseDetails />,
+      content: ({user})  => <SpouseDetails user={user}/>,
     },
     {
       id: "personal_preferences",
       label: "Personal Preferences",
-      content: <PersonalDetails />,
+      content: ({user}) => <PersonalDetails user={user}/>,
     },
   ].filter(Boolean);
+
+  
+const [cookies] = useCookies(["user_id"]);
+
+const getUser = async (token) => {
+  try {
+    const response = await fetch(mainRequestUrl("user"), {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      toast.error(`Error: ${errorData.message || response.statusText}`);
+      return;
+    }
+
+    const data = await response.json();
+    setUserData(data.user);
+  } catch (error) {
+    toast.error("Failed to fetch user data");
+  }
+};
+
+useEffect(() => {
+  if (cookies.user_id) {
+    getUser(cookies.user_id);
+  }
+}, [cookies.user_id]);
 
   return (
     <MainLayout>
@@ -56,10 +92,7 @@ function Profile() {
                 </div>
               }
             >
-              <div className="px-10">
-              {item.content}
-              </div>
-            
+              <div className="px-10">{item.content({user:userData})}</div>
             </Tab>
           )}
         </Tabs>
@@ -73,7 +106,7 @@ function Profile() {
         >
           {(item) => (
             <Tab key={item.id} title={item.label}>
-              {item.content}
+              {item.content({user:userData})}
             </Tab>
           )}
         </Tabs>

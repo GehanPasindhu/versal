@@ -11,10 +11,15 @@ function InputProfile({
   onClear,
   isReadOnly = true,
   options = [],
+  value = "",
 }) {
   const [isVisible, setIsVisible] = useState(false);
 
   const toggleVisibility = () => setIsVisible(!isVisible);
+
+  const handleChange = (e) => {
+    if (onChange) onChange(e.target.value);
+  };
   return (
     <>
       <div className="flex flex-col justify-center items-start gap-3 w-[70dvw] md:w-full">
@@ -41,22 +46,30 @@ function InputProfile({
             placeholder={placeholder}
             isRequired={isRequired}
             type={isVisible ? "text" : "password"}
-            onChange={onChange}
+            onChange={handleChange}
+            value={value}
             isReadOnly={isReadOnly}
           />
         ) : type === "select" ? (
           <>
-          <Select isDisabled={isReadOnly}    className="max-w-md w-full">
-            {options?.map((selectOptions, index)=>(
-              <SelectItem key={index}>
-                {selectOptions}
-              </SelectItem>
-            ))}
-          </Select>
+            <Select
+              selectedKeys={[value]}
+              onChange={(e) => onChange && onChange(e.target.value)}
+              isDisabled={isReadOnly}
+              className="max-w-md w-full"
+            >
+              {options?.map((selectOptions, index) => (
+                <SelectItem key={index}>{selectOptions}</SelectItem>
+              ))}
+            </Select>
           </>
         ) : type === "radio" ? (
           <>
-            <RadioGroup isDisabled={isReadOnly} orientation="horizontal">
+            <RadioGroup 
+            value={value}
+            onChange={(e) => onChange && onChange(e.target.value)}
+            
+            isDisabled={isReadOnly} orientation="horizontal">
               {options?.map((radioOption, index) => (
                 <Radio key={index} value={radioOption} className="pr-5">
                   {radioOption}
@@ -72,10 +85,12 @@ function InputProfile({
             placeholder={placeholder}
             isRequired={isRequired}
             type={"text"}
-            onChange={onChange}
             isClearable
             onClear={onClear}
-           isDisabled={isReadOnly}
+            isDisabled={isReadOnly}
+            onChange={handleChange}
+            value={value}
+  
           />
         )}
       </div>

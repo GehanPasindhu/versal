@@ -40,9 +40,10 @@ const userSchema = new mongoose.Schema(
     user_id: { type: String, required: true, unique: true },
     password: { type: String, required: true },
 
-    salutation: { type: String, default: "", required: false },
-    firstname: { type: String, default: "", required: false },
-    lastname: { type: String, default: "", required: false },
+    salutation: { type: String, default: "" },
+    firstname: { type: String, default: "" },
+    lastname: { type: String, default: "" },
+    email: { type: String, default: "" },
 
     home_address: { type: String, default: "" },
     country: { type: String, default: "" },
@@ -64,12 +65,12 @@ const userSchema = new mongoose.Schema(
     gender: {
       type: String,
       enum: ["male", "female"],
-      default: "",
+      default: "male",
     },
     marital_status: {
       type: String,
       enum: ["single", "married"],
-      default: "",
+      default: "single",
     },
 
     spouse_details: {
@@ -187,16 +188,16 @@ const authenticate = (req, res, next) => {
 };
 
 router.post("/basic_details", authenticate, async (req, res) => {
-  const { salutation, firstname, lastname } = req.body;
+  const { salutation, firstname, lastname, email } = req.body;
 
-  if (!salutation || !firstname || !lastname) {
+  if (!salutation || !firstname || !lastname || !email) {
     return res.status(400).json({ message: "All fields required" });
   }
 
   try {
     const updatedUser = await User.findByIdAndUpdate(
       req.user.id,
-      { salutation, firstname, lastname },
+      { salutation, firstname, lastname, email },
       { new: true }
     );
 
@@ -210,7 +211,8 @@ router.post("/basic_details", authenticate, async (req, res) => {
 });
 
 router.post("/additional_details", authenticate, async (req, res) => {
-  const { home_address, country, postcode, dob, gender, marital_status } = req.body;
+  const { home_address, country, postcode, dob, gender, marital_status } =
+    req.body;
 
   if (!home_address || !country || !postcode) {
     return res.status(400).json({ message: "All fields required" });
@@ -218,7 +220,9 @@ router.post("/additional_details", authenticate, async (req, res) => {
 
   const userAge = new Date().getFullYear() - new Date(dob).getFullYear();
   if (userAge < 17) {
-    return res.status(400).json({ message: "User must be at least 17 years old" });
+    return res
+      .status(400)
+      .json({ message: "User must be at least 17 years old" });
   }
 
   try {
@@ -260,7 +264,9 @@ router.post("/spouse_details", authenticate, async (req, res) => {
     if (!updatedUser)
       return res.status(404).json({ message: "User not found" });
 
-    res.status(200).json({ message: "Spouse details updated", user: updatedUser });
+    res
+      .status(200)
+      .json({ message: "Spouse details updated", user: updatedUser });
   } catch (err) {
     res.status(500).json({ message: "Error updating profile" });
   }
@@ -306,6 +312,28 @@ router.post("/preferences", authenticate, async (req, res) => {
   }
 });
 
+router.get("/user", async (req, res) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ message: "No token provided" });
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findOne({ user_id: decoded.user_id });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({ user });
+  } catch (err) {
+    res.status(401).json({ message: "Invalid token", error: err.message });
+  }
+});
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });

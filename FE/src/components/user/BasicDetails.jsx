@@ -1,8 +1,31 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ProfileCard from "../../layout/ProfileCard";
 import InputProfile from "../InputProfile";
 
-function BasicDetails() {
+function BasicDetails(user) {
+  const [formData, setFormData] = useState({
+    salutation: "",
+    first_name: "",
+    last_name: "",
+    email_address: "",
+  });
+
+  useEffect(() => {
+    setFormData({
+      salutation: user?.user?.salutaion || "",
+      first_name: user?.user?.firstname || "",
+      last_name: user?.user?.lastname || "",
+      email_address: user?.user?.email || "",
+    });
+  }, [user]);
+
+  const handleInputChange = (name, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   return (
     <>
       <ProfileCard>
@@ -17,14 +40,26 @@ function BasicDetails() {
               type="select"
               isRequired
               options={["Mr", "Mrs", "Ms"]}
+              value={formData.salutation}
             />
-            <InputProfile name={"first_name"} label={"First Name"} isRequired />
-            <InputProfile name={"last_name"} label={"Last Name"} isRequired />
+            <InputProfile
+              name={"first_name"}
+              label={"First Name"}
+              isRequired
+              value={formData.first_name}
+            />
+            <InputProfile
+              name={"last_name"}
+              label={"Last Name"}
+              isRequired
+              value={formData.last_name}
+            />
             <InputProfile
               name={"email_address"}
               label={"Email Address"}
               type="email"
               isRequired
+              value={formData.email_address}
             />
           </div>
         </div>
