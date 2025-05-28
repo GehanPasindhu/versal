@@ -40,6 +40,7 @@ const userSchema = new mongoose.Schema(
     user_id: { type: String, required: true, unique: true },
     password: { type: String, required: true },
 
+    profilepic : {type:String, default : ""},
     salutation: { type: String, default: "" },
     firstname: { type: String, default: "" },
     lastname: { type: String, default: "" },
@@ -188,7 +189,7 @@ const authenticate = (req, res, next) => {
 };
 
 router.post("/basic_details", authenticate, async (req, res) => {
-  const { salutation, firstname, lastname, email } = req.body;
+  const { profilepic, salutation, firstname, lastname, email } = req.body;
 
   if (!salutation || !firstname || !lastname || !email) {
     return res.status(400).json({ message: "All fields required" });
@@ -197,7 +198,7 @@ router.post("/basic_details", authenticate, async (req, res) => {
   try {
     const updatedUser = await User.findByIdAndUpdate(
       req.user.id,
-      { salutation, firstname, lastname, email },
+      { profilepic, salutation, firstname, lastname, email },
       { new: true }
     );
 
@@ -252,7 +253,7 @@ router.post("/spouse_details", authenticate, async (req, res) => {
     const updatedUser = await User.findByIdAndUpdate(
       req.user.id,
       {
-        spouse: {
+        spouse_details: {
           salutation,
           firstname,
           lastname,

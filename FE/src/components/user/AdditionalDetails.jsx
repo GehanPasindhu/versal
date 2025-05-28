@@ -1,25 +1,29 @@
 import React, { useEffect, useState } from "react";
 import ProfileCard from "../../layout/ProfileCard";
 import InputProfile from "../InputProfile";
+import { useCookies } from "react-cookie";
+import { mainRequestUrl } from "../../api/baseUrl";
+import { toast } from "react-toastify";
+import EditButtons from "../EditButtons";
 
-function AdditionalDetails({ user }) {
+function AdditionalDetails({ user, editable = true }) {
   const [formData, setFormData] = useState({
     home_address: "",
     country: "",
-    post_code: "",
-    date_of_birth: "",
+    postcode: "",
+    dob: "",
     gender: "",
     marital_status: "",
   });
 
   useEffect(() => {
     setFormData({
-      home_address: user?.user?.home_address || "",
-      country: user?.user?.country || "",
-      post_code: user?.user?.postcode || "",
-      date_of_birth: user?.user?.dob || "",
-      gender: user?.user?.gender || "Male",
-      marital_status: user?.user?.marital_status || "Single",
+      home_address: user?.home_address || "",
+      country: user?.country || "",
+      postcode: user?.postcode || "",
+      dob: user?.dob || "",
+      gender: user?.gender || "Male",
+      marital_status: user?.marital_status || "Single",
     });
   }, [user]);
 
@@ -28,6 +32,31 @@ function AdditionalDetails({ user }) {
       ...prev,
       [name]: value,
     }));
+  };
+
+  const [cookies] = useCookies(["user_id"]);
+
+  const updateProfile = async () => {
+    try {
+      const res = await fetch(mainRequestUrl("additional_details"), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cookies.user_id}`,
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        toast.success("Registration successful!");
+      } else {
+        toast.error("Registration failed:", data.message);
+      }
+    } catch (error) {
+      console.log("Error", error);
+    }
   };
 
   return (
@@ -39,7 +68,7 @@ function AdditionalDetails({ user }) {
           isRequired
           value={formData.home_address}
           onChange={(val) => handleInputChange("home_address", val)}
-          
+          isReadOnly={editable}
         />
         <InputProfile
           name="country"
@@ -47,22 +76,22 @@ function AdditionalDetails({ user }) {
           isRequired
           value={formData.country}
           onChange={(val) => handleInputChange("country", val)}
-          
+          isReadOnly={editable}
         />
         <InputProfile
-          name="post_code"
+          name="postcode"
           label="Post Code"
           isRequired
-          value={formData.post_code}
-          onChange={(val) => handleInputChange("post_code", val)}
-          
+          value={formData.postcode}
+          onChange={(val) => handleInputChange("postcode", val)}
+          isReadOnly={editable}
         />
         <InputProfile
           name="date_of_birth"
           label="Date of Birth"
-          value={formData.date_of_birth}
-          onChange={(val) => handleInputChange("date_of_birth", val)}
-          
+          value={formData.dob}
+          onChange={(val) => handleInputChange("dob", val)}
+          isReadOnly={editable}
         />
         <InputProfile
           name="gender"
@@ -71,7 +100,7 @@ function AdditionalDetails({ user }) {
           options={["Male", "Female"]}
           value={formData.gender}
           onChange={(val) => handleInputChange("gender", val)}
-          
+          isReadOnly={editable}
         />
         <InputProfile
           name="marital_status"
@@ -80,9 +109,11 @@ function AdditionalDetails({ user }) {
           options={["Single", "Married"]}
           value={formData.marital_status}
           onChange={(val) => handleInputChange("marital_status", val)}
-          
+          isReadOnly={editable}
         />
       </div>
+
+      {!editable && <EditButtons onClick={updateProfile} />}
     </ProfileCard>
   );
 }

@@ -49,27 +49,33 @@ function InputProfile({
             onChange={handleChange}
             value={value}
             isReadOnly={isReadOnly}
+            aria-label={label}
           />
         ) : type === "select" ? (
           <>
             <Select
+              aria-label={label}
               selectedKeys={[value]}
               onChange={(e) => onChange && onChange(e.target.value)}
               isDisabled={isReadOnly}
               className="max-w-md w-full"
             >
               {options?.map((selectOptions, index) => (
-                <SelectItem key={index}>{selectOptions}</SelectItem>
+                <SelectItem key={index} value={selectOptions}>
+                  {selectOptions}
+                </SelectItem>
               ))}
             </Select>
           </>
         ) : type === "radio" ? (
           <>
-            <RadioGroup 
-            value={value}
-            onChange={(e) => onChange && onChange(e.target.value)}
-            
-            isDisabled={isReadOnly} orientation="horizontal">
+            <RadioGroup
+              value={value}
+              aria-label={label}
+              onChange={(e) => onChange && onChange(e.target.value)}
+              isDisabled={isReadOnly}
+              orientation="horizontal"
+            >
               {options?.map((radioOption, index) => (
                 <Radio key={index} value={radioOption} className="pr-5">
                   {radioOption}
@@ -79,6 +85,7 @@ function InputProfile({
           </>
         ) : (
           <Input
+            aria-label={label}
             endContent={type === "password" ? passwordEndContent : null}
             className="max-w-md w-full"
             name={name}
@@ -90,7 +97,6 @@ function InputProfile({
             isDisabled={isReadOnly}
             onChange={handleChange}
             value={value}
-  
           />
         )}
       </div>

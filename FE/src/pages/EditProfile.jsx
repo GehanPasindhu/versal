@@ -9,7 +9,7 @@ import { mainRequestUrl } from "../api/baseUrl";
 import { toast } from "react-toastify";
 import { useCookies } from "react-cookie";
 
-function Profile() {
+function EditProfile() {
   const [hasSpouse, setHasSpouse] = useState(false);
   const [userData, setUserData] = useState([]);
 
@@ -17,59 +17,58 @@ function Profile() {
     {
       id: "basic_details",
       label: "Basic Details",
-      content:({user}) => <BasicDetails user={user}/>,
+      content: ({ user }) => <BasicDetails user={user} editable={false} />,
     },
     {
       id: "additional_details",
       label: "Additional Details",
-      content:({user}) =>  <AdditionalDetails user={user}/>,
+      content: ({ user }) => <AdditionalDetails user={user} editable={false} />,
     },
     hasSpouse && {
       id: "spouse_details",
       label: "Spouse Details",
-      content: ({user})  => <SpouseDetails user={user}/>,
+      content: ({ user }) => <SpouseDetails user={user} editable={false} />,
     },
     {
       id: "personal_preferences",
       label: "Personal Preferences",
-      content: ({user}) => <PersonalDetails user={user}/>,
+      content: ({ user }) => <PersonalDetails user={user} editable={false} />,
     },
   ].filter(Boolean);
 
-  
-const [cookies] = useCookies(["user_id"]);
+  const [cookies] = useCookies(["user_id"]);
 
-const getUser = async (token) => {
-  try {
-    const response = await fetch(mainRequestUrl("user"), {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+  const getUser = async (token) => {
+    try {
+      const response = await fetch(mainRequestUrl("user"), {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      toast.error(`Error: ${errorData.message || response.statusText}`);
-      return;
+      if (!response.ok) {
+        const errorData = await response.json();
+        toast.error(`Error: ${errorData.message || response.statusText}`);
+        return;
+      }
+
+      const data = await response.json();
+      setUserData(data.user);
+
+      if (data?.user?.marital_status === "Married") {
+        setHasSpouse(true);
+      }
+    } catch (error) {
+      toast.error("Failed to fetch user data");
     }
+  };
 
-    const data = await response.json();
-    setUserData(data.user);
-
-    if(data?.user?.marital_status === "Married"){
-setHasSpouse(true)
+  useEffect(() => {
+    if (cookies.user_id) {
+      getUser(cookies.user_id);
     }
-  } catch (error) {
-    toast.error("Failed to fetch user data");
-  }
-};
-
-useEffect(() => {
-  if (cookies.user_id) {
-    getUser(cookies.user_id);
-  }
-}, [cookies.user_id]);
+  }, [cookies.user_id]);
 
   return (
     <MainLayout>
@@ -95,7 +94,7 @@ useEffect(() => {
                 </div>
               }
             >
-              <div className="px-10">{item.content({user:userData})}</div>
+              <div className="px-10">{item.content({ user: userData })}</div>
             </Tab>
           )}
         </Tabs>
@@ -109,7 +108,7 @@ useEffect(() => {
         >
           {(item) => (
             <Tab key={item.id} title={item.label}>
-              {item.content({user:userData})}
+              {item.content({ user: userData })}
             </Tab>
           )}
         </Tabs>
@@ -118,4 +117,4 @@ useEffect(() => {
   );
 }
 
-export default Profile;
+export default EditProfile;
