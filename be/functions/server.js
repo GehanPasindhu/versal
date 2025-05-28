@@ -1,9 +1,9 @@
 require("dotenv").config();
-const express = require("express");
-const jwt = require("jsonwebtoken");
 const cors = require("cors");
-const mongoose = require("mongoose");
+const express = require("express");
 const serverless = require("serverless-http");
+const jwt = require("jsonwebtoken");
+const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const multer = require("multer");
 const axios = require("axios");
@@ -13,36 +13,14 @@ const app = express();
 const router = express.Router();
 
 app.use(express.json());
-
 const corsOptions = {
-  origin: function (origin, callback) {
-
-    if (!origin) return callback(null, true);
-    
-    const allowedOrigins = [
-      "https://boockies.com",
-      "http://localhost:3000",
-      "http://localhost:3001", 
-      "http://localhost:8080",
-      "http://localhost:8888",
-      "http://127.0.0.1:3000"
-    ];
-    
-    if (allowedOrigins.includes(origin) || process.env.NODE_ENV === 'development') {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE", "OPTIONS"],
+  origin: "*",
+  methods: "GET, HEAD, PUT, PATCH, POST, DELETE",
   credentials: true,
   optionsSuccessStatus: 204,
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 };
 
 app.use(cors(corsOptions));
-
-app.options('*', cors(corsOptions));
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
