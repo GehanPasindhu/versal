@@ -11,7 +11,7 @@ function App() {
 
   return (
     <>
-      <BrowserRouter>
+      <BrowserRouter basename="/vinod/">
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/home" element={<Home />} />

@@ -1,0 +1,20 @@
+# Enable the RewriteEngine
+RewriteEngine On
+
+# Set base path for the project
+RewriteBase /vinod
+
+# Redirect all traffic to index.html
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.html [QSA,L]
+
+# Set cache control headers
+<FilesMatch "\.(html|htm|js|css|json|png|jpg|jpeg|gif|ico|svg|woff|woff2)$">
+  Header set Cache-Control "max-age=31536000, public"
+</FilesMatch>
+
+# Enable CORS
+<IfModule mod_headers.c>
+  Header set Access-Control-Allow-Origin "*"
+</IfModule>
