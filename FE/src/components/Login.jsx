@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import InputBox from "./InputBox";
 import { useCookies } from "react-cookie";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { mainRequestUrl } from "../api/baseUrl";
 
 function Login({ onChange }) {
   const [form, setForm] = useState({
@@ -13,6 +15,8 @@ function Login({ onChange }) {
   const [formValidated, setFormValidated] = useState(false);
 
   const [cookies, setCookie] = useCookies(["user_id"]);
+
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -29,19 +33,41 @@ function Login({ onChange }) {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const oneYear = 60 * 60 * 24 * 365;
+    try {
+      const res = await fetch(mainRequestUrl("login"), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
 
-    setCookie("user_id", "gehan123", {
-      path: "/",
-      maxAge: oneYear,
-      sameSite: 'strict',
-      secure: false,
-    });
+      if (res.ok) {
+        const data = await res.json();
+        toast.success(data.message);
 
-    toast.success("Login successful!")
+        const oneYear = 60 * 60 * 24 * 365;
+
+        setCookie("user_id", data.token, {
+          path: "/",
+          maxAge: oneYear,
+          sameSite: "strict",
+          secure: false,
+        });
+
+        navigate("/profile");
+      } else {
+
+        const errorData = await res.json();
+        toast.error("Login failed: " + (errorData.message || "Unknown error"));
+      }
+    } catch (error) {
+      toast.error(error);
+    }
+
   };
 
   useEffect(() => {

@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import InputBox from "./InputBox";
 import { toast } from "react-toastify";
 import { mainRequestUrl } from "../api/baseUrl";
+import { useCookies } from "react-cookie";
+import { useNavigate } from "react-router-dom";
 
 function Register({ onChange }) {
   const [form, setForm] = useState({
@@ -40,6 +42,10 @@ function Register({ onChange }) {
     setError(value !== form.password);
   };
 
+  const [cookies, setCookie] = useCookies(["user_id"]);
+
+  const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -49,21 +55,28 @@ function Register({ onChange }) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          user_id: form.user_id,
-          password: form.password,
-        }),
+        body: JSON.stringify(form),
       });
 
-      const data = await res.json();
+      if (res.ok) {
+        const data = await res.json();
+        toast.success(data.message);
 
-      if (res.status === 201) {
-        toast.success("Registration successful!");
+        const oneYear = 60 * 60 * 24 * 365;
+
+        setCookie("user_id", data.token, {
+          path: "/",
+          maxAge: oneYear,
+          sameSite: "strict",
+          secure: false,
+        });
+
+        navigate("/profile");
       } else {
         toast.error("Registration failed:", data.message);
       }
     } catch (error) {
-      toast.error("Fetch error:", error);
+      toast.error(error);
     }
   };
 

@@ -84,7 +84,7 @@ function MainLayout({ children, showHandburger = true }) {
           )}
         </AnimatePresence>
       </div>
-      <div className="md:mx-10">{children}</div>
+      <div className="flex flex-col w-full justify-center items-start gap-10 ">{children}</div>
     </div>
   );
 }

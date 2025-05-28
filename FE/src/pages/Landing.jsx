@@ -20,7 +20,7 @@ function Landing() {
   return (
     <>
       <MainLayout showHandburger={false}>
-        <div className="w-full justify-center items-center flex flex-col gap-5 ">
+        <div className="w-full justify-center items-center flex flex-col gap-5">
           <div className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl py-10">
             Welcome to <span className="font-extrabold">myApp</span>
           </div>

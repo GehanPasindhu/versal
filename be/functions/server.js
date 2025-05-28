@@ -124,7 +124,7 @@ router.post("/create", async (req, res) => {
 
     res.status(201).json({
       message: "User created successfully!",
-      token: `Bearer ${token}`,
+      token: token,
     });
 
     res.status(201).json({ message: `Data saved successfully!` });
@@ -162,7 +162,7 @@ router.post("/login", async (req, res) => {
 
     res.status(200).json({
       message: "Login successful",
-      token: `Bearer ${token}`,
+      token: token,
     });
   } catch (error) {
     console.error("Login error:", error.message);
