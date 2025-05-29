@@ -13,7 +13,7 @@ function Login({ onChange }) {
   });
 
   const [formValidated, setFormValidated] = useState(false);
-  const [checkboxchecked, setCheckBoxChecked] = useState(false)
+  const [checkboxchecked, setCheckBoxChecked] = useState(false);
 
   const [cookies, setCookie] = useCookies(["user_id"]);
 
@@ -45,7 +45,6 @@ function Login({ onChange }) {
         },
         body: JSON.stringify(form),
       });
-
       if (res.ok) {
         const data = await res.json();
         toast.success(data.message);
@@ -59,7 +58,7 @@ function Login({ onChange }) {
           secure: false,
         });
 
-        if(checkboxchecked){
+        if (checkboxchecked) {
           setCookie("checkedUser", data.token, {
             path: "/",
             maxAge: oneYear,
@@ -70,14 +69,12 @@ function Login({ onChange }) {
 
         navigate("/profile");
       } else {
-
         const errorData = await res.json();
         toast.error("Login failed: " + (errorData.message || "Unknown error"));
       }
     } catch (error) {
       toast.error(error);
     }
-
   };
 
   useEffect(() => {
@@ -85,10 +82,9 @@ function Login({ onChange }) {
     setFormValidated(allValid);
   }, [form]);
 
-
-  const checkBoxChange = (e) =>{
-    setCheckBoxChecked(!checkboxchecked)
-  }
+  const checkBoxChange = (e) => {
+    setCheckBoxChecked(!checkboxchecked);
+  };
 
   return (
     <div>
@@ -119,7 +115,9 @@ function Login({ onChange }) {
         />
 
         <div className="flex flex-col justify-end items-center md:justify-center md:items-start md:ml-52  gap-3 w-full">
-          <Checkbox isDisabled={!formValidated} onValueChange={checkBoxChange}>Keep me logged in</Checkbox>
+          <Checkbox isDisabled={!formValidated} onValueChange={checkBoxChange}>
+            Keep me logged in
+          </Checkbox>
 
           <Button
             isDisabled={!formValidated}

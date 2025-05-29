@@ -1,0 +1,37 @@
+{
+  "version": "3",
+  "remote": {
+    "https://edge.netlify.com/": "fd941d61d88673d5f28aab283fb86fcc50f08a3bc80ee5470498fcfa88c65cfb",
+    "https://edge.netlify.com/bootstrap/config.ts": "19dcaa5c4480175295c4dffc9be11f7c280d9391b851d30409f3e6904c34a161",
+    "https://edge.netlify.com/bootstrap/context.ts": "b9b4e7cbb67a9d83cb28e45145ba3dfa6f05ad965587ef7e2fb0896da62dd16e",
+    "https://edge.netlify.com/bootstrap/cookie.ts": "8b0baae708989ca183c6f3b4ab3d029e6abcbc2e43f93edeb0ff447b3bbc3a05",
+    "https://edge.netlify.com/bootstrap/edge_function.ts": "b8253e86aa83c67341f5cfedeba5049d77fbf84dcab7eceff7566b7728ae9b39",
+    "https://edge.netlify.com/bootstrap/globals/types.ts": "eaa6148ded3121d8dee62dd91c86e7fe76601df0f3ca8d7962243a30f4c8935f"
+  },
+  "workspace": {
+    "packageJson": {
+      "dependencies": [
+        "npm:archiver@^7.0.1",
+        "npm:axios@^1.8.1",
+        "npm:bcryptjs@^2.4.3",
+        "npm:cors@^2.8.5",
+        "npm:crypto@^1.0.1",
+        "npm:dotenv@^16.4.1",
+        "npm:express@^4.19.2",
+        "npm:json2csv@^6.0.0-alpha.2",
+        "npm:jsonwebtoken@^9.0.2",
+        "npm:mongodb@^6.3.0",
+        "npm:mongoose@^8.1.1",
+        "npm:multer@^1.4.5-lts.1",
+        "npm:netlify-cli@^17.26.1",
+        "npm:netlify-lambda@^0.4.0",
+        "npm:nodemon@^3.1.10",
+        "npm:serverless-http@^3.2.0",
+        "npm:swagger-jsdoc@^6.2.8",
+        "npm:swagger-ui-express@^5.0.0",
+        "npm:twilio@^5.4.5",
+        "npm:uuid@^10.0.0"
+      ]
+    }
+  }
+}

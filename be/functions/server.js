@@ -1,9 +1,11 @@
 require("dotenv").config();
-const cors = require("cors");
 const express = require("express");
-const serverless = require("serverless-http");
-const jwt = require("jsonwebtoken");
+const cors = require("cors");
 const mongoose = require("mongoose");
+const serverless = require("serverless-http");
+
+
+const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const multer = require("multer");
 const axios = require("axios");
@@ -13,6 +15,7 @@ const app = express();
 const router = express.Router();
 
 app.use(express.json());
+
 const corsOptions = {
   origin: "*",
   methods: "GET, HEAD, PUT, PATCH, POST, DELETE",
@@ -21,6 +24,8 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+
+app.options('*', cors(corsOptions));
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
@@ -126,7 +131,6 @@ router.post("/create", async (req, res) => {
       token: token,
     });
 
-    res.status(201).json({ message: `Data saved successfully!` });
   } catch (error) {
     console.error("Error saving data:", error.message);
     res.status(500).json({
